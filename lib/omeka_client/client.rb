@@ -4,16 +4,23 @@ module OmekaClient
 
     attr_accessor :endpoint, :api_key, :connection
 
-    def initialize(site_url, api_key = nil )
-      @endpoint = site_url + "/api"
+    def initialize(endpoint, api_key = nil )
+      @endpoint = endpoint
       @api_key = api_key
       @connection = Rest::Client.new
+    end
+
+    def get(resource, id = nil, query = {} )
+      url = self.endpoint + "/" + resource
+      url += "/" + id.to_s unless id.nil?
+      self.connection.get(url)
     end
 
     def site
       result =  self.rest.get(self.endpoint + "api/site")
       JSON.parse(result.body)
     end
+
 
   end
 
