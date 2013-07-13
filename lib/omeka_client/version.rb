@@ -1,3 +1,3 @@
-module OmekaClient
+class OmekaClient
   VERSION = "0.0.1"
 end
