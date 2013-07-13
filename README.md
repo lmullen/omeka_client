@@ -53,6 +53,12 @@ If you just want a raw REST connection to Omeka, then you can access the underly
 
     client.connection
 
+## Testing and documentation
+
+You can run the tests by running `rake test`. You'll need to have an Omeka site running at least 2.1-RC1 to use the tests.
+
+You can generate the documentation by running `rake yard`.
+
 ## Future plans
 
 For now the gem only handles GET requests. I'm going to work on making methods that pull information out of Omeka as robust as possible before I deal with POST, PUT, and DELETE. Contributions are more than welcome.
