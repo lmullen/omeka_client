@@ -28,7 +28,7 @@ First, load the gem in your script:
 
 Next, create a client to interact with your Omeka site. You'll need your endpoint and, optionally, an API key.
 
-    client = OmekaClient::Client.new(http://localhost/omeka/api, "api_key")
+    client = OmekaClient::Client.new("http://localhost/omeka/api", "api_key")
     # => #<OmekaClient::Client:0x007f4307937aa0>
 
 You can use the convenience methods for easy access to data.
