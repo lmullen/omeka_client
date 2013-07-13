@@ -1,5 +1,10 @@
 module OmekaClient
 
+  # 
+  # A class to create clients that interact with the Omeka API
+  # 
+  # @author Lincoln Mullen
+  # 
   class Client
 
     attr_accessor :endpoint, :api_key, :connection
