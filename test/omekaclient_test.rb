@@ -16,14 +16,20 @@ describe OmekaClient::Client do
     OmekaClient::Client.new(test_endpoint).api_key.must_be_nil
   end
 
-  it "must successfully request the items resource" do
+  it "must successfully request items and collections " do
     client = OmekaClient::Client.new(test_endpoint)
-    client.get("items").code.must_equal 200
+    resources = ["items", "collections"]
+    resources.each do |resource|
+      client.get(resource).code.must_equal 200
+    end
   end
 
-  it "must successfully request a single item" do
+  it "must successfully request a single item or collection" do
     client = OmekaClient::Client.new(test_endpoint)
-    client.get("items", 1).code.must_equal 200
+    resources = ["items", "collections"]
+    resources.each do |resource|
+      client.get(resource, 1).code.must_equal 200
+    end
   end
 
 end
