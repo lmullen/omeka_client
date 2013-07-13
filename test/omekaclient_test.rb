@@ -61,4 +61,9 @@ describe OmekaClient::Client do
     client.site['title'].wont_be_nil
   end
 
+  it "must list the resources available via the API" do
+    client = OmekaClient::Client.new(test_endpoint, test_api_key)
+    client.resources.wont_be_empty
+  end
+
 end

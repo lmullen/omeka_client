@@ -61,12 +61,18 @@ module OmekaClient
     # Convenience methods
     # -------------------------------------------------------------------
 
-    # 
     # Get the description of the Omeka site
     # 
     # @return [Hash] A hash of the description of the Omeka site
     def site
       self.get_hash('site')
+    end
+
+    # Get a list of the resources available from the Omeka API
+    # 
+    # @return [Hash] Returns a hash of the resources available via the API
+    def resources
+      self.get_hash('resources')
     end
 
   end
