@@ -19,23 +19,47 @@ module OmekaClient
       @connection = Rest::Client.new
     end
 
+    # Generic methods
+    # -------------------------------------------------------------------
+
     # Generic GET request to the Omeka site
     # @param  resource [String] The Omeka resource to request, e.g.
     #   "items", "collections"
     # @param  id [Integer] The id of the specific resource to request. Include
     #   an id to get just one item; do not include it to get all the items.
-    # @param  query = {} [Hash] Additional query parameters
+    # @param  query [Hash] Additional query parameters
     # 
-    # @return [JSON] The JSON representation of the requested object
+    # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     def get(resource, id = nil, query = {} )
       url = self.endpoint + "/" + resource
       url += "/" + id.to_s unless id.nil?
-      self.connection.get(url)
+      query[:key] = self.api_key unless self.api_key.nil?
+      self.connection.get(url, :params => query)
     end
 
+    # Parse a GET request into a useable format
+    # @param  resource [String] The Omeka resource to request, e.g.
+    #   "items", "collections"
+    # @param  id [Integer] The id of the specific resource to request. Include
+    #   an id to get just one item; do not include it to get all the items.
+    # @param  query [Hash] Additional query parameters
+    #
+    # @return [Array or Hash] A hash of the representation of the object,
+    #   or an array of hashes.
+    def get_hash(resource, id = nil, query = {} )
+      response = self.get(resource, id, query)
+      if response.code == 200
+        JSON.parse(response.body)
+      end
+    end
+
+    # Other generic methods to write
     # TODO: post
     # TODO: put
     # TODO: delete
+
+    # Convenience methods
+    # -------------------------------------------------------------------
 
     def site
       result =  self.rest.get(self.endpoint + "api/site")

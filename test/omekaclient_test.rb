@@ -24,7 +24,7 @@ describe OmekaClient::Client do
   end
 
   it "must successfully request items and collections " do
-    client = OmekaClient::Client.new(test_endpoint)
+    client = OmekaClient::Client.new(test_endpoint, test_api_key)
     resources = ["items", "collections"]
     resources.each do |resource|
       client.get(resource).code.must_equal 200
@@ -32,10 +32,27 @@ describe OmekaClient::Client do
   end
 
   it "must successfully request a single item or collection" do
-    client = OmekaClient::Client.new(test_endpoint)
+    client = OmekaClient::Client.new(test_endpoint, test_api_key)
     resources = ["items", "collections"]
     resources.each do |resource|
       client.get(resource, 1).code.must_equal 200
+    end
+  end
+
+  it "must return a persistent wrapper for a GET request" do
+    client = OmekaClient::Client.new(test_endpoint, test_api_key)
+    resources = ["items", "collections"]
+    resources.each do |resource|
+      client.get(resource).must_be_instance_of \
+      Rest::Wrappers::NetHttpPersistentResponseWrapper
+    end
+  end
+
+  it "must return a hash or array for a GET request" do
+    client = OmekaClient::Client.new(test_endpoint, test_api_key)
+    resources = ["items", "collections"]
+    resources.each do |resource|
+      client.get_hash(resource).must_be_instance_of Array || Hash
     end
   end
 
