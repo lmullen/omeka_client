@@ -61,9 +61,12 @@ module OmekaClient
     # Convenience methods
     # -------------------------------------------------------------------
 
+    # 
+    # Get the description of the Omeka site
+    # 
+    # @return [Hash] A hash of the description of the Omeka site
     def site
-      result =  self.rest.get(self.endpoint + "api/site")
-      JSON.parse(result.body)
+      self.get_hash('site')
     end
 
   end

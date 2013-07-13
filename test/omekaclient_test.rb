@@ -56,4 +56,9 @@ describe OmekaClient::Client do
     end
   end
 
+  it "must return a representation of the site description" do
+    client = OmekaClient::Client.new(test_endpoint, test_api_key)
+    client.site['title'].wont_be_nil
+  end
+
 end
