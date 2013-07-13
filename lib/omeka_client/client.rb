@@ -75,6 +75,32 @@ module OmekaClient
       self.get_hash('resources')
     end
 
+    # Get a list of the Omeka items
+    # 
+    # TODO: Check that items are available in the resources
+    # 
+    # @return [Array] Returns an array of item hashes
+    def items
+      self.get_hash('items')
+    end
+
+    # Get a list of the Omeka collections
+    # 
+    # TODO: Check that items are available in the resources
+    # 
+    # @return [Array] Returns an array of collection hashes
+    def collections
+      self.get_hash('collections')
+    end
+
+    # Other generic methods to write
+    # TODO: tags
+    # TODO: files
+    # TODO: item_types
+    # TODO: elements
+    # TODO: element_sets
+    # TODO: users
+
   end
 
 end

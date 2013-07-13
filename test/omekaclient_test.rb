@@ -63,7 +63,20 @@ describe OmekaClient::Client do
 
   it "must list the resources available via the API" do
     client = OmekaClient::Client.new(test_endpoint, test_api_key)
+    client.resources.must_be_instance_of Hash
     client.resources.wont_be_empty
+  end
+
+  it "must list the items available via the API" do
+    client = OmekaClient::Client.new(test_endpoint, test_api_key)
+    client.items.must_be_instance_of Array
+    client.items.wont_be_empty
+  end
+
+  it "must list the collections available via the API" do
+    client = OmekaClient::Client.new(test_endpoint, test_api_key)
+    client.collections.must_be_instance_of Array
+    client.collections.wont_be_empty
   end
 
 end
