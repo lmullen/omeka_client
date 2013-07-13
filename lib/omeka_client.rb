@@ -4,12 +4,12 @@ require "omeka_client/version"
 
 class OmekaClient
 
-  attr_accessor :endpoint, :key, :rest
+  attr_accessor :endpoint, :api_key, :connection
 
-  def initialize(endpoint, key)
-    @endpoint = endpoint
-    @key = key
-    @rest = Rest::Client.new
+  def initialize(site_url, api_key = nil )
+    @endpoint = site_url + "/api"
+    @api_key = api_key
+    @connection = Rest::Client.new
   end
 
   def site
