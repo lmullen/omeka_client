@@ -8,10 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = OmekaClient::VERSION
   spec.authors       = ["Lincoln Mullen"]
   spec.email         = ["lincoln@lincolnmullen.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
-  spec.homepage      = ""
-  spec.license       = "MIT"
+  spec.description   = %q{A REST client to access the Omeka API}
+  spec.summary       = %q{A REST client to access the Omeka API}
+  spec.homepage      = "https://github.com/lmullen/omeka_client"
+  spec.license       = "GPLv3"
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -20,4 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
+
+  spec.add_dependency "rest", "~> 2.6.3"
 end

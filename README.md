@@ -1,6 +1,7 @@
 # OmekaClient
 
-TODO: Write a gem description
+A REST client for [Omeka](http://omeka.org), using the API introduced
+in Omeka 2.1.
 
 ## Installation
 
