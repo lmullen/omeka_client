@@ -63,6 +63,22 @@ module OmekaClient
     # TODO: put
     # TODO: delete
 
+    # Methods that return classes
+    # -------------------------------------------------------------------
+
+    # 
+    # Get an array or a single Omeka item represented as an OmekaItem class
+    # @param  id  [Integer] The ID of the item to return. No value gets an
+    # array of all the items.
+    # @param  query = {} [Hash] Additional query parameters 
+    # @since  0.0.2
+    # 
+    # @return [OmekaItem] An OmekaItem representation of the desired item
+    def omeka_items(id = nil, query = {} )
+      response = self.get_hash('items', id, query)
+      OmekaItem.new(response)
+    end
+
     # Convenience methods
     # -------------------------------------------------------------------
 
