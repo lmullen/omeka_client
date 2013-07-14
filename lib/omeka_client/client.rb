@@ -73,10 +73,18 @@ module OmekaClient
     # @param  query = {} [Hash] Additional query parameters 
     # @since  0.0.2
     # 
-    # @return [OmekaItem] An OmekaItem representation of the desired item
+    # @return [OmekaItem] An OmekaItem representation of the desired item, or an array of OmekaItems 
     def omeka_items(id = nil, query = {} )
-      response = self.get_hash('items', id, query)
-      OmekaItem.new(response)
+      response = self.get_hash('items', id = id, query = query)
+      if id.nil?
+        items = Array.new
+        response.each do |item_hash|
+          items.push OmekaItem.new(item_hash)
+        end
+        return items
+      else
+        OmekaItem.new(response)
+      end
     end
 
     # Convenience methods

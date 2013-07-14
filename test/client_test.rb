@@ -71,4 +71,12 @@ describe OmekaClient::Client do
     puts client.omeka_items(1).must_be_instance_of OmekaClient::OmekaItem
   end
 
+  it "must return an array of OmekaItem classes" do
+    puts client.omeka_items.must_be_instance_of Array
+    [0,1].each do |number|
+      puts client.omeka_items[number].must_be_instance_of \
+        OmekaClient::OmekaItem
+    end
+  end
+
 end
