@@ -43,7 +43,7 @@ You can use the convenience methods for easy access to data.
     puts items[0]['url']
     # => http://localhost/omeka/api/items/1
 
-If you want more flexibility, you can use the higher level methods.
+If you want more flexibility, you can use the lower-level methods.
 
     client.get('collections', 1)
 
