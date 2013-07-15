@@ -31,7 +31,26 @@ Next, create a client to interact with your Omeka site. You'll need your endpoin
     client = OmekaClient::Client.new("http://localhost/omeka/api", "api_key")
     # => #<OmekaClient::Client:0x007f4307937aa0>
 
-You can use the convenience methods for easy access to data.
+You can use the convenience methods for easy access to data. The most useful methods return classes that represent OmekaItems.
+
+    item = client.omeka_items(1)
+    item.id
+    # => 1
+    item.public
+    # => true
+    item.dublin_core.title
+    # => "Questions of the Soul"
+    item.dublin_core.author
+    # => "Hecker, Isaac Thomas, 1819-1888."
+    item.item_type
+    # => "book"
+    item.item_type_metadata.binding
+    # => "cloth"
+
+    item = client.omeka_items
+    # returns array of OmekaItem instances
+
+There are some helper methods to get other results in other forms:
 
     site_info = client.site
     puts site_info['title']
@@ -43,7 +62,7 @@ You can use the convenience methods for easy access to data.
     puts items[0]['url']
     # => http://localhost/omeka/api/items/1
 
-If you want more flexibility, you can use the lower-level methods.
+If you want more flexibility about what you're requesting, you can use the lower-level methods.
 
     client.get('collections', 1)
 
@@ -61,7 +80,7 @@ You can generate the documentation by running `rake yard`.
 
 ## Future plans
 
-For now the gem only handles GET requests. I'm going to work on making methods that pull information out of Omeka as robust as possible before I deal with POST, PUT, and DELETE. Contributions are more than welcome.
+For now the gem only handles GET requests. I'm going to work on making methods that pull information out of Omeka as robust as possible before I deal with POST, PUT, and DELETE. In particular, the class representations of Omeka items are important. Contributions are more than welcome.
 
 ## License
 
