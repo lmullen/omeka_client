@@ -35,6 +35,7 @@ module OmekaClient
     # @param  query [Hash] Additional query parameters
     # 
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
+    # @since 0.0.1
     def get(resource, id = nil, query = {} )
       url = self.endpoint + "/" + resource
       url += "/" + id.to_s unless id.nil?
@@ -51,6 +52,7 @@ module OmekaClient
     #
     # @return [Array or Hash] A hash of the representation of the object,
     #   or an array of hashes.
+    # @since 0.0.1
     def get_hash(resource, id = nil, query = {} )
       response = self.get(resource, id, query)
       if response.code == 200
@@ -73,7 +75,8 @@ module OmekaClient
     # @param  query = {} [Hash] Additional query parameters 
     # @since  0.0.2
     # 
-    # @return [OmekaItem] An OmekaItem representation of the desired item, or an array of OmekaItems 
+    # @return [OmekaItem] An OmekaItem representation of the desired item,
+    # or an array of OmekaItems 
     def omeka_items(id = nil, query = {} )
       response = self.get_hash('items', id = id, query = query)
       if id.nil?
@@ -98,8 +101,9 @@ module OmekaClient
     end
 
     # Get a list of the resources available from the Omeka API
-    # 
+    #
     # @return [Hash] Returns a hash of the resources available via the API
+    # @since 0.0.1
     def resources
       self.get_hash('resources')
     end
@@ -109,6 +113,7 @@ module OmekaClient
     # TODO: Check that items are available in the resources
     # 
     # @return [Array] Returns an array of item hashes
+    # @since 0.0.1
     def items
       self.get_hash('items')
     end
@@ -118,6 +123,7 @@ module OmekaClient
     # TODO: Check that items are available in the resources
     # 
     # @return [Array] Returns an array of collection hashes
+    # @since 0.0.1
     def collections
       self.get_hash('collections')
     end
