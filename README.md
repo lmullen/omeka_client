@@ -1,4 +1,4 @@
-# OmekaClient
+# Omeka Client
 
 A REST client for [Omeka][], using the API introduced in Omeka 2.1.
 
