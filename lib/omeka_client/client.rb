@@ -74,7 +74,7 @@ module OmekaClient
       self.connection.post(url, :body => body, :params => query)
     end
 
-    # Delete a resource
+    # Generic DELETE request to the Omeka site
     # @param  resource [String] The type of Omeka resource to delete, e.g.
     #   "items", "collections"
     # @param  id [Integer] The id number of the Omeka resource to delete
