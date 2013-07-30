@@ -5,9 +5,9 @@ describe OmekaClient::Client do
 
   # Setup a test client
   test_endpoint = "http://localhost/omeka-2.1-rc1/api"
-  test_api_key = "c56c8f542bc98483b71896523d4faa6321de193b"
-  resources = ["items", "collections"]
-  client = OmekaClient::Client.new(test_endpoint, test_api_key)
+  test_api_key  = "3b036221e180af46bafa4b5e4a1db30e84e78e89"    # contributor
+  resources     = ["items", "collections"]
+  client        = OmekaClient::Client.new(test_endpoint, test_api_key)
 
   it "must have an endpoint" do
     client.endpoint.must_equal test_endpoint
