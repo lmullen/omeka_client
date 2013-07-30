@@ -60,8 +60,23 @@ module OmekaClient
       end
     end
 
+    # Generic POST request to the Omeka site
+    # @param  resource [String] The Omeka resource to request, e.g.
+    #   "items", "collections"
+    # @param  body [String] A string containing a JSON representation of the body of the item
+    # @param  headers [Hash] Additional HTTP headers (optional)
+    # @param  query = {} [Hash] Additional query parameters (optional)
+    # 
+    # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
+    # @since 0.0.3
+    def post(resource, body = nil, headers = nil, query = {} )
+      url = self.endpoint + "/" + resource
+      query['key'] = self.api_key unless self.api_key.nil?
+      self.connection.post(url, :body => body, :headers => headers,
+        :params => query)
+    end
+
     # Other generic methods to write
-    # TODO: post
     # TODO: put
     # TODO: delete
 
