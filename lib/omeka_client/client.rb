@@ -60,10 +60,60 @@ module OmekaClient
       end
     end
 
-    # Other generic methods to write
-    # TODO: post
-    # TODO: put
-    # TODO: delete
+    # Generic POST request to the Omeka site
+    # @param  resource [String] The Omeka resource to request, e.g.
+    #   "items", "collections"
+    # @param  body [String] A string containing a JSON representation of the body of the item
+    # @param  query = {} [Hash] Additional query parameters (optional)
+    # 
+    # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
+    # @since 0.0.3
+    def post(resource, body = nil, query = {} )
+      url = self.endpoint + "/" + resource
+      query['key'] = self.api_key unless self.api_key.nil?
+      self.connection.post(url, :body => body, :params => query)
+    end
+
+    # Generic DELETE request to the Omeka site
+    # @param  resource [String] The type of Omeka resource to delete, e.g.
+    #   "items", "collections"
+    # @param  id [Integer] The id number of the Omeka resource to delete
+    # @param  query = {} [Hash] Additional query parameters
+    # 
+    # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
+    # @since 0.0.3
+    def delete(resource, id, query = {} )
+      url = self.endpoint + "/" + resource
+      url += "/" + id.to_s unless id.nil?
+      query[:key] = self.api_key unless self.api_key.nil?
+
+      # The rest gem that provides out functionality has a bug. The Omeka API
+      # returns 204 No Content on DELETE, indicating that the item has been
+      # successfully deleted but that there is no body to return. The rest
+      # gem assumes there will be a body, so it throws a type error. Until
+      # this is fixed, we just rescue the error and don't worry about it.
+      begin
+        self.connection.delete(url, :params => query)
+      rescue TypeError
+        # Not putting the error to stdout
+      end
+
+    end
+
+    # Generic DELETE request to the Omeka site
+    # @param  resource [String] The type of Omeka resource to update, e.g.
+    #   "items", "collections"
+    # @param  id [Integer] The id number of the Omeka resource to update
+    # @param  query = {} [Hash] Additional query parameters
+    # 
+    # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
+    # @since 0.0.3
+    def put(resource, id, body, query = {} )
+      url = self.endpoint + "/" + resource
+      url += "/" + id.to_s unless id.nil?
+      query[:key] = self.api_key unless self.api_key.nil?
+      self.connection.put(url, :body => body, :params => query)
+    end
 
     # Methods that return classes
     # -------------------------------------------------------------------
