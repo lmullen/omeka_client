@@ -71,17 +71,21 @@ describe OmekaClient::Client do
    client.omeka_items(1).must_be_instance_of OmekaClient::OmekaItem
  end
 
- it "must return an array of OmekaItem classes" do
-  puts client.omeka_items.must_be_instance_of Array
-  [0,1].each do |number|
-    client.omeka_items[number].must_be_instance_of \
-    OmekaClient::OmekaItem
+  it "must return an array of OmekaItem classes" do
+    client.omeka_items.must_be_instance_of Array
+    [0,1].each do |number|
+      client.omeka_items[number].must_be_instance_of \
+      OmekaClient::OmekaItem
+    end
   end
-end
 
-it "must be able to add an item with post" do
-  body = '{"public":true,"featured":false,"element_texts":[{"html":false,"text":"Successfully Added Item","element_set":{"id":1,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/element_sets\/1","name":"Dublin Core","resource":"element_sets"},"element":{"id":50,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/elements\/50","name":"Title","resource":"elements"}}]}'
-  client.post("items", body).code.must_equal 201
-end
+  it "must be able to POST an item and then DELETE it" do
+    body = '{"public":true,"featured":false,"element_texts":[{"html":false,"text":"Item Added via API","element_set":{"id":1,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/element_sets\/1","name":"Dublin Core","resource":"element_sets"},"element":{"id":50,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/elements\/50","name":"Title","resource":"elements"}}]}'
+    client.post("items", body).code.must_equal 201
+    id = client.omeka_items.last.id
+
+    # We can't make an assertion yet, because of a bug in the rest gem.
+    client.delete("items", id)
+  end
 
 end
