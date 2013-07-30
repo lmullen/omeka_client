@@ -5,9 +5,9 @@ describe OmekaClient::Client do
 
   # Setup a test client
   test_endpoint = "http://localhost/omeka-2.1-rc1/api"
-  test_api_key = "c56c8f542bc98483b71896523d4faa6321de193b"
-  resources = ["items", "collections"]
-  client = OmekaClient::Client.new(test_endpoint, test_api_key)
+  test_api_key  = "3b036221e180af46bafa4b5e4a1db30e84e78e89"    # contributor
+  resources     = ["items", "collections"]
+  client        = OmekaClient::Client.new(test_endpoint, test_api_key)
 
   it "must have an endpoint" do
     client.endpoint.must_equal test_endpoint
@@ -68,15 +68,37 @@ describe OmekaClient::Client do
   end
 
   it "must return an OmekaItem class" do
-    puts client.omeka_items(1).must_be_instance_of OmekaClient::OmekaItem
-  end
+   client.omeka_items(1).must_be_instance_of OmekaClient::OmekaItem
+ end
 
   it "must return an array of OmekaItem classes" do
-    puts client.omeka_items.must_be_instance_of Array
+    client.omeka_items.must_be_instance_of Array
     [0,1].each do |number|
-      puts client.omeka_items[number].must_be_instance_of \
-        OmekaClient::OmekaItem
+      client.omeka_items[number].must_be_instance_of \
+      OmekaClient::OmekaItem
     end
+  end
+
+  it "must be able to POST an item and then DELETE it" do
+    body = '{"public":true,"featured":false,"element_texts":[{"html":false,"text":"Item Added via API","element_set":{"id":1,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/element_sets\/1","name":"Dublin Core","resource":"element_sets"},"element":{"id":50,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/elements\/50","name":"Title","resource":"elements"}}]}'
+    client.post("items", body).code.must_equal 201
+    id = client.omeka_items.last.id
+
+    # We can't make an assertion yet, because of a bug in the rest gem.
+    client.delete("items", id)
+  end
+
+  it "must be able to update an item via PUT" do
+    body_original = '{"public":true,"featured":false,"element_texts":[{"html":false,"text":"Item Added via API","element_set":{"id":1,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/element_sets\/1","name":"Dublin Core","resource":"element_sets"},"element":{"id":50,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/elements\/50","name":"Title","resource":"elements"}}]}'
+    body_updated = '{"featured":true,"element_texts":[{"html":false,"text":"Item Updated via API","element_set":{"id":1,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/element_sets\/1","name":"Dublin Core","resource":"element_sets"},"element":{"id":50,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/elements\/50","name":"Title","resource":"elements"}}]}'
+    client.post("items", body_original)
+    item_original = client.omeka_items.last
+    item_original.dublin_core.title.must_equal "Item Added via API"
+    item_original.featured.must_equal false
+    client.put("items", item_original.id, body_updated).code.must_equal 200
+    item_updated = client.omeka_items(item_original.id)
+    item_updated.dublin_core.title.must_equal "Item Updated via API"
+    item_updated.featured.must_equal true
   end
 
 end
