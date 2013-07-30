@@ -64,16 +64,14 @@ module OmekaClient
     # @param  resource [String] The Omeka resource to request, e.g.
     #   "items", "collections"
     # @param  body [String] A string containing a JSON representation of the body of the item
-    # @param  headers [Hash] Additional HTTP headers (optional)
     # @param  query = {} [Hash] Additional query parameters (optional)
     # 
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.3
-    def post(resource, body = nil, headers = nil, query = {} )
+    def post(resource, body = nil, query = {} )
       url = self.endpoint + "/" + resource
       query['key'] = self.api_key unless self.api_key.nil?
-      self.connection.post(url, :body => body, :headers => headers,
-        :params => query)
+      self.connection.post(url, :body => body, :params => query)
     end
 
     # Delete a resource
