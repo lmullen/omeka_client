@@ -100,8 +100,20 @@ module OmekaClient
 
     end
 
-    # Other generic methods to write
-    # TODO: put
+    # Generic DELETE request to the Omeka site
+    # @param  resource [String] The type of Omeka resource to update, e.g.
+    #   "items", "collections"
+    # @param  id [Integer] The id number of the Omeka resource to update
+    # @param  query = {} [Hash] Additional query parameters
+    # 
+    # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
+    # @since 0.0.3
+    def put(resource, id, body, query = {} )
+      url = self.endpoint + "/" + resource
+      url += "/" + id.to_s unless id.nil?
+      query[:key] = self.api_key unless self.api_key.nil?
+      self.connection.put(url, :body => body, :params => query)
+    end
 
     # Methods that return classes
     # -------------------------------------------------------------------
