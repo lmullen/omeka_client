@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "yard", "~> 0.8.6.2"
 
   spec.add_dependency "rest", "~> 2.6.3"
+  spec.add_dependency "recursive-open-struct", "~> 0.4.3"
 end
