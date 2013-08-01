@@ -1,60 +1,63 @@
-require "ostruct"
+require "recursive-open-struct"
 
 module OmekaClient
 
-  # 
+  #
   # A class to represent an item in an Omeka site
-  # 
+  #
   # @author Lincoln Mullen
   # @since  0.0.2
-  # 
+  #
   class OmekaItem
 
-    # Instance variables for each of the main parts of the metadata
-    attr_accessor :id, :url, :public, :featured, :added, :modified, \
-    :item_type, :collection, :owner, :files, :tags, :dublin_core, \
-    :item_type_metadata, :extended_resources
+    attr_accessor :data
 
-    # 
-    # Parse the data we got from the API into handy methods
+    # Parse the data we got from the API into handy methods. All of the data
+    # from the JSON returned by the API is available as RecursiveOpenStructs
+    # through @data. The Dublin Core and Item Type Metadata fields are also
+    # available though special methods of the form dc_title and itm_field.
+    #
     # @param  hash [Hash] Uses the hash from OmekaClient::Client::get_hash
-    # 
+    #
     def initialize(hash)
+      @data = RecursiveOpenStruct.new(hash, :recurse_over_arrays => true)
 
-      # Some of these values have strings. Others return arrays or hashes.
-      @id = hash['id']
-      @url = hash['url']
-      @public = hash['public']
-      @featured = hash['featured']
-      @added = hash['added']
-      @modified = hash['modified']
-      @item_type = hash['item_type']
-      @collection = hash['collection']
-      @owner = hash['owner']
-      @files = hash['files']
-      @tags = hash['tags']
-      @extended_resources = ['extended_resources']
-
-      # OpenStruct.new requires a hash of method names and methods values,
-      # which we construct here for Dublin Core and for the Item Type
-      # Metadata. The downside is that we are discarding some data.
-      # Element names become method names: "Lesson Plan" to "lesson_plan"
-      dc_metadata = Hash.new
-      item_metadata = Hash.new
-      hash['element_texts'].each do |e|
-        if e['element_set']['name'] == "Dublin Core"
-          method_name = e['element']['name'].downcase.gsub(/\s/, '_')
-          dc_metadata[method_name] = e['text']
-        elsif e['element_set']['name'] == "Item Type Metadata"
-          method_name = e['element']['name'].downcase.gsub(/\s/, '_')
-          item_metadata[method_name] = e['text']
+      # Step through the element texts separating them into Dublin Core and
+      # Item Type Metadata elements. e is the element text hash; i is the
+      # index of the element_text in the array of element texts.
+      @data.element_texts.each_with_index do |e, i|
+        if e.element_set.name == "Dublin Core"
+          # Define a reader method that retrieves the data from this element
+          # text in @data
+          self.class.send(:define_method,
+            # The name of the method will have the form "dc_title"
+            e.element.name.downcase.gsub(/^/, 'dc_').gsub(/\s/, '_'),
+            proc{ @data.element_texts[i].text }
+            )
+          # Define a setter method that sets the data for this element text in
+          # @ data
+          self.class.send(:define_method,
+            # The name of the method will have the form "dc_title="
+            e.element.name.downcase.gsub(/^/, 'dc_').gsub(/\s/, '_').gsub(/$/, '='),
+            proc{ |value| @data.element_texts[i].text = value }
+            )
+        elsif e.element_set.name == "Item Type Metadata"
+          # Define a reader method that retrieves the data from this element
+          # text in @data
+          self.class.send(:define_method,
+            # The name of the method will have the form "itm_field"
+            e.element.name.downcase.gsub(/^/, 'itm_').gsub(/\s/, '_'),
+            proc{ @data.element_texts[i].text }
+            )
+          # Define a setter method that sets the data for this element text in
+          # @ data
+          self.class.send(:define_method,
+            # The name of the method will have the form "itm_title="
+            e.element.name.downcase.gsub(/^/, 'itm_').gsub(/\s/, '_').gsub(/$/, '='),
+            proc{ |value| @data.element_texts[i].text = value }
+            )
         end
       end
-
-      # The OpenStruct will provide methods of the style
-      # item.dublin_core.title
-      @dublin_core = OpenStruct.new(dc_metadata)
-      @item_type_metadata = OpenStruct.new(item_metadata)
 
     end
 

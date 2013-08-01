@@ -82,7 +82,7 @@ describe OmekaClient::Client do
   it "must be able to POST an item and then DELETE it" do
     body = '{"public":true,"featured":false,"element_texts":[{"html":false,"text":"Item Added via API","element_set":{"id":1,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/element_sets\/1","name":"Dublin Core","resource":"element_sets"},"element":{"id":50,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/elements\/50","name":"Title","resource":"elements"}}]}'
     client.post("items", body).code.must_equal 201
-    id = client.omeka_items.last.id
+    id = client.omeka_items.last.data.id
 
     # We can't make an assertion yet, because of a bug in the rest gem.
     client.delete("items", id)
@@ -93,12 +93,23 @@ describe OmekaClient::Client do
     body_updated = '{"featured":true,"element_texts":[{"html":false,"text":"Item Updated via API","element_set":{"id":1,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/element_sets\/1","name":"Dublin Core","resource":"element_sets"},"element":{"id":50,"url":"http:\/\/localhost\/omeka-2.1-rc1\/api\/elements\/50","name":"Title","resource":"elements"}}]}'
     client.post("items", body_original)
     item_original = client.omeka_items.last
-    item_original.dublin_core.title.must_equal "Item Added via API"
-    item_original.featured.must_equal false
-    client.put("items", item_original.id, body_updated).code.must_equal 200
-    item_updated = client.omeka_items(item_original.id)
-    item_updated.dublin_core.title.must_equal "Item Updated via API"
-    item_updated.featured.must_equal true
+    item_original.dc_title.must_equal "Item Added via API"
+    item_original.data.featured.must_equal false
+    client.put("items", item_original.data.id, body_updated).code.must_equal 200
+    item_updated = client.omeka_items(item_original.data.id)
+    item_updated.dc_title.must_equal "Item Updated via API"
+    item_updated.data.featured.must_equal true
+  end
+
+  it "must be able to post, put, and delete an OmekaItem" do
+    item = client.omeka_items(1)
+    item.dc_title = "This item has been added via the API"
+    client.post_item(item).code.must_equal 201
+    new_item = client.omeka_items.last
+    new_item.dc_title.must_equal item.dc_title
+    new_item.dc_title = "This item has been updated via the API"
+    client.put_item(new_item).code.must_equal 200
+    client.delete_item(new_item) # can't test response code because of the bug
   end
 
 end

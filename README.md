@@ -34,21 +34,26 @@ Next, create a client to interact with your Omeka site. You'll need your endpoin
 You can use the convenience methods for easy access to data. The most useful methods return classes that represent OmekaItems.
 
     item = client.omeka_items(1)
-    item.id
-    # => 1
-    item.public
-    # => true
-    item.dublin_core.title
-    # => "Questions of the Soul"
-    item.dublin_core.author
-    # => "Hecker, Isaac Thomas, 1819-1888."
-    item.item_type
-    # => "book"
-    item.item_type_metadata.binding
-    # => "cloth"
 
-    item = client.omeka_items
-    # returns array of OmekaItem instances
+Now you can access every piece of information returned by the Omeka API through the `data` variable.
+
+    item.data.id
+    # => 1
+    item.data.public
+    # => true
+    item.data.added
+    # => "2013-07-13T04:47:08+00:00"
+
+But since the data you probably want most are the element texts for either the Dublin Core Metadata or the Item Type Metadata, they can be accessed through methods of this type:
+
+    item.dc_title
+    # => "Questions of the Soul"
+    item.dc_author
+    # => "Hecker, Isaac Thomas, 1819-1888."
+    item.itm_binding
+    # => "cloth"
+    item.itm_signature
+    # => "signed by author"
 
 There are some helper methods to get other results in other forms:
 
@@ -62,11 +67,25 @@ There are some helper methods to get other results in other forms:
     puts items[0]['url']
     # => http://localhost/omeka/api/items/1
 
+Once you have an Omeka item, you can update it on the site, create a new item on the site, or delete it from the site.
+
+    # Create a new item (your local Ruby item will not point to this new item)
+    client.post_item(item)
+
+    # Update an item
+    item.dc_title = "Updated via API"
+    client.put_item(item)
+
+    # Delete an item
+    client.delete_item(item)
+
 If you want more flexibility about what you're requesting, you can use the lower-level methods.
 
     client.get('collections', 1)
 
     client.get_hash('collections', 1)
+
+You can send information to the Omeka site using the low-level methods `client.push`, `client.put`, and `client.delete`. These methods each takes a JSON object.
 
 If you just want a raw REST connection to Omeka, then you can access the underlying instance from the [Rest gem][].
 
@@ -77,10 +96,6 @@ If you just want a raw REST connection to Omeka, then you can access the underly
 You can run the tests by running `rake test`. You'll need to have an Omeka site running at least 2.1-RC1 to use the tests.
 
 You can generate the documentation by running `rake yard`.
-
-## Future plans
-
-For now the gem only handles GET requests. I'm going to work on making methods that pull information out of Omeka as robust as possible before I deal with POST, PUT, and DELETE. In particular, the class representations of Omeka items are important. Contributions are more than welcome.
 
 ## License
 

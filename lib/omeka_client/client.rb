@@ -1,10 +1,10 @@
 module OmekaClient
 
-  # 
+  #
   # A class to create clients that interact with the Omeka API
-  # 
+  #
   # @author Lincoln Mullen
-  # 
+  #
   class Client
 
     attr_accessor :endpoint, :api_key, :connection
@@ -33,7 +33,7 @@ module OmekaClient
     # @param  id [Integer] The id of the specific resource to request. Include
     #   an id to get just one item; do not include it to get all the items.
     # @param  query [Hash] Additional query parameters
-    # 
+    #
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.1
     def get(resource, id = nil, query = {} )
@@ -65,7 +65,7 @@ module OmekaClient
     #   "items", "collections"
     # @param  body [String] A string containing a JSON representation of the body of the item
     # @param  query = {} [Hash] Additional query parameters (optional)
-    # 
+    #
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.3
     def post(resource, body = nil, query = {} )
@@ -79,7 +79,7 @@ module OmekaClient
     #   "items", "collections"
     # @param  id [Integer] The id number of the Omeka resource to delete
     # @param  query = {} [Hash] Additional query parameters
-    # 
+    #
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.3
     def delete(resource, id, query = {} )
@@ -105,7 +105,7 @@ module OmekaClient
     #   "items", "collections"
     # @param  id [Integer] The id number of the Omeka resource to update
     # @param  query = {} [Hash] Additional query parameters
-    # 
+    #
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.3
     def put(resource, id, body, query = {} )
@@ -115,18 +115,18 @@ module OmekaClient
       self.connection.put(url, :body => body, :params => query)
     end
 
-    # Methods that return classes
+    # Methods that use classes
     # -------------------------------------------------------------------
 
-    # 
+    #
     # Get an array or a single Omeka item represented as an OmekaItem class
     # @param  id  [Integer] The ID of the item to return. No value gets an
     # array of all the items.
-    # @param  query = {} [Hash] Additional query parameters 
+    # @param  query = {} [Hash] Additional query parameters
     # @since  0.0.2
-    # 
+    #
     # @return [OmekaItem] An OmekaItem representation of the desired item,
-    # or an array of OmekaItems 
+    # or an array of OmekaItems
     def omeka_items(id = nil, query = {} )
       response = self.get_hash('items', id = id, query = query)
       if id.nil?
@@ -140,11 +140,32 @@ module OmekaClient
       end
     end
 
+    # Create a new item from an OmekaItem instance
+    # @param omeka_item [OmekaItem] An instance of OmekaItem
+    # @since 0.0.4
+    def post_item(omeka_item)
+      self.post("items", omeka_item.data.to_h.to_json)
+    end
+
+    # Update an item using an OmekaItem instance
+    # @param omeka_item [OmekaItem] An instance of OmekaItem
+    # @since 0.0.4
+    def put_item(omeka_item)
+      self.put("items", omeka_item.data.id, omeka_item.data.to_h.to_json)
+    end
+
+    # Delete the item represented by an OmekaItem instance
+    # @param omeka_item [OmekaItem] An instance of OmekaItem
+    # @since 0.0.4
+    def delete_item(omeka_item)
+      self.delete("items", omeka_item.data.id)
+    end
+
     # Convenience methods
     # -------------------------------------------------------------------
 
     # Get the description of the Omeka site
-    # 
+    #
     # @return [Hash] A hash of the description of the Omeka site
     def site
       self.get_hash('site')
@@ -159,9 +180,9 @@ module OmekaClient
     end
 
     # Get a list of the Omeka items
-    # 
+    #
     # TODO: Check that items are available in the resources
-    # 
+    #
     # @return [Array] Returns an array of item hashes
     # @since 0.0.1
     def items
@@ -169,9 +190,9 @@ module OmekaClient
     end
 
     # Get a list of the Omeka collections
-    # 
+    #
     # TODO: Check that items are available in the resources
-    # 
+    #
     # @return [Array] Returns an array of collection hashes
     # @since 0.0.1
     def collections

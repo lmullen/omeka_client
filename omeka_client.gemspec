@@ -22,6 +22,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.1.0"
   spec.add_development_dependency "minitest"
   spec.add_development_dependency "yard", "~> 0.8.6.2"
+  spec.add_development_dependency "pry", "~> 0.9.12.2"
 
   spec.add_dependency "rest", "~> 2.6.3"
+  spec.add_dependency "recursive-open-struct", "~> 0.4.3"
 end
