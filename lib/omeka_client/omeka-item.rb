@@ -11,7 +11,7 @@ module OmekaClient
   class OmekaItem
 
     # Instance variables for each of the main parts of the metadata
-    attr_accessor :data, :dublin_core, :item_type_metadata
+    attr_accessor :data
 
     #
     # Parse the data we got from the API into handy methods
@@ -20,24 +20,18 @@ module OmekaClient
     def initialize(hash)
       @data = RecursiveOpenStruct.new(hash, :recurse_over_arrays => true)
 
-      # @data.new_ostruct_member(:dublin_core)
-
-      dublin_core = Hash.new
-      item_type_metadata = Hash.new
-      @data.element_texts.each do |element_text|
+      @data.element_texts.each_with_index do |element_text, index|
         if element_text.element_set.name == "Dublin Core"
-          method_name = element_text.element.name.downcase.gsub(/\s/, '_')
-          value       = element_text.text
-          dublin_core[method_name] = value
-        elsif element_text.element_set.name == "Item Type Metadata"
-          method_name = element_text.element.name.downcase.gsub(/\s/, '_')
-          value       = element_text.text
-          item_type_metadata[method_name] = value
+          self.class.send(:define_method,
+            element_text.element.name.downcase.gsub(/^/, 'dc_').gsub(/\s/, '_'),
+            proc{@data.element_texts_as_a_hash[index]["text"]}
+            )
+          self.class.send(:define_method,
+            element_text.element.name.downcase.gsub(/^/, 'dc_').gsub(/\s/, '_').gsub(/$/, '='),
+            proc{ |value| @data.element_texts[index].text = value }
+            )
         end
       end
-
-      @dublin_core = RecursiveOpenStruct.new(dublin_core)
-      @item_type_metadata = RecursiveOpenStruct.new(item_type_metadata)
 
     end
 
