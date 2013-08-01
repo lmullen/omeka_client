@@ -67,13 +67,25 @@ There are some helper methods to get other results in other forms:
     puts items[0]['url']
     # => http://localhost/omeka/api/items/1
 
+Once you have an Omeka item, you can update it on the site, create a new item on the site, or delete it from the site.
+
+    # Create a new item (your local Ruby item will not point to this new item)
+    client.post_item(item)
+
+    # Update an item
+    item.dc_title = "Updated via API"
+    client.put_item(item)
+
+    # Delete an item
+    client.delete_item(item)
+
 If you want more flexibility about what you're requesting, you can use the lower-level methods.
 
     client.get('collections', 1)
 
     client.get_hash('collections', 1)
 
-You can send information to the Omeka site using the low-level methods `client.push`, `client.put`, and `client.delete`.
+You can send information to the Omeka site using the low-level methods `client.push`, `client.put`, and `client.delete`. These methods each takes a JSON object.
 
 If you just want a raw REST connection to Omeka, then you can access the underlying instance from the [Rest gem][].
 

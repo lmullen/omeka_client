@@ -101,4 +101,15 @@ describe OmekaClient::Client do
     item_updated.data.featured.must_equal true
   end
 
+  it "must be able to post, put, and delete an OmekaItem" do
+    item = client.omeka_items(1)
+    item.dc_title = "This item has been added via the API"
+    client.post_item(item).code.must_equal 201
+    new_item = client.omeka_items.last
+    new_item.dc_title.must_equal item.dc_title
+    new_item.dc_title = "This item has been updated via the API"
+    client.put_item(new_item).code.must_equal 200
+    client.delete_item(new_item) # can't test response code because of the bug
+  end
+
 end
