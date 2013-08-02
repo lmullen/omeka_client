@@ -168,6 +168,26 @@ module OmekaClient
       OmekaSite.new(self.get_hash('site'))
     end
 
+    # Get a OmekaCollection class representation of an Omeka collection
+    # @param  id  [Integer] The ID of the collection to return. No value gets
+    # an array of all the items.
+    # @param  query = {} [Hash] Additional query parameters
+    # @return  [Array or OmekaCollection] An OmekaCollection or array of Omeka
+    # Collections @since 0.0.5
+    def get_collections(id = nil)
+      response = self.get_hash('collections', id = id)
+      if id.nil?
+        collections = Array.new
+        response.each do |hash|
+          items.push OmekaCollection.new(hash)
+        end
+        return collections
+      else
+        OmekaCollection.new(response)
+      end
+    end
+
+
     # Convenience methods
     # -------------------------------------------------------------------
 
