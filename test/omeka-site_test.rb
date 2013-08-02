@@ -9,7 +9,7 @@ site = client.get_site
 
 describe OmekaClient::OmekaSite do
   it "should be of class OmekaSite" do
-    site.must_be_instance_of OmekaSite
+    site.must_be_instance_of OmekaClient::OmekaSite
   end
 
   it "should have data about the site" do
@@ -19,7 +19,7 @@ describe OmekaClient::OmekaSite do
   it "should know the important data about the site" do
    [:omeka_url, :omeka_version, :title, :description, \
     :author, :copyright]. each do |var|
-      site.send(var).must_be_instance_of String
+      site.data.send(var).must_be_instance_of String
     end
   end
 

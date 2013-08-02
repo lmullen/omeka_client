@@ -162,7 +162,7 @@ module OmekaClient
     end
 
     # Get a OmekaSite class representation of the Omeka site
-    # @returns [OmekaSite] The representation of the Omeka site
+    # @return [OmekaSite] The representation of the Omeka site
     # @since 0.0.5
     def get_site
       OmekaSite.new(self.get_hash('site'))

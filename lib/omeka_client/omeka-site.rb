@@ -10,7 +10,7 @@ module OmekaClient
   #
   class OmekaSite
 
-    # @data holds the site information such as URL and title
+    # Site information such as URL and title stored in @data
     attr_accessor :data
 
     def initialize(hash)
