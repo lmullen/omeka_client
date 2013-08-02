@@ -10,7 +10,7 @@ module OmekaClient
   #
   class OmekaItem
 
-    attr_accessor :data
+    attr_accessor :data, :dublin_core, :item_type_metadata
 
     # Parse the data we got from the API into handy methods. All of the data
     # from the JSON returned by the API is available as RecursiveOpenStructs
@@ -21,44 +21,8 @@ module OmekaClient
     #
     def initialize(hash)
       @data = RecursiveOpenStruct.new(hash, :recurse_over_arrays => true)
-
-      # Step through the element texts separating them into Dublin Core and
-      # Item Type Metadata elements. e is the element text hash; i is the
-      # index of the element_text in the array of element texts.
-      @data.element_texts.each_with_index do |e, i|
-        if e.element_set.name == "Dublin Core"
-          # Define a reader method that retrieves the data from this element
-          # text in @data
-          self.class.send(:define_method,
-            # The name of the method will have the form "dc_title"
-            e.element.name.downcase.gsub(/^/, 'dc_').gsub(/\s/, '_'),
-            proc{ @data.element_texts[i].text }
-            )
-          # Define a setter method that sets the data for this element text in
-          # @ data
-          self.class.send(:define_method,
-            # The name of the method will have the form "dc_title="
-            e.element.name.downcase.gsub(/^/, 'dc_').gsub(/\s/, '_').gsub(/$/, '='),
-            proc{ |value| @data.element_texts[i].text = value }
-            )
-        elsif e.element_set.name == "Item Type Metadata"
-          # Define a reader method that retrieves the data from this element
-          # text in @data
-          self.class.send(:define_method,
-            # The name of the method will have the form "itm_field"
-            e.element.name.downcase.gsub(/^/, 'itm_').gsub(/\s/, '_'),
-            proc{ @data.element_texts[i].text }
-            )
-          # Define a setter method that sets the data for this element text in
-          # @ data
-          self.class.send(:define_method,
-            # The name of the method will have the form "itm_title="
-            e.element.name.downcase.gsub(/^/, 'itm_').gsub(/\s/, '_').gsub(/$/, '='),
-            proc{ |value| @data.element_texts[i].text = value }
-            )
-        end
-      end
-
+      @dublin_core = DublinCore.new(@data)
+      @item_type_metadata = ItemTypeMetadata.new(@data)
     end
 
   end
