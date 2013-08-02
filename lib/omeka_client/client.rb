@@ -161,6 +161,13 @@ module OmekaClient
       self.delete("items", omeka_item.data.id)
     end
 
+    # Get a OmekaSite class representation of the Omeka site
+    # @returns [OmekaSite] The representation of the Omeka site
+    # @since 0.0.5
+    def get_site
+      OmekaSite.new(self.get_hash('site'))
+    end
+
     # Convenience methods
     # -------------------------------------------------------------------
 
