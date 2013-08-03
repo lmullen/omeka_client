@@ -49,11 +49,11 @@ describe OmekaClient::OmekaCollection do
   end
 
   it "should have methods for each of the Dublin Core metadata" do
-    dc_fields = [:title, :subject, :contributor, :description, :creator, \
+    fields = [:title, :subject, :contributor, :description, :creator, \
     :source, :publisher,  :date,  :rights, :relation, :format, :language, \
     :type, :identifier, :coverage]
-    dc_fields.each do |field|
-      collection.send("dc_#{field}").must_be_instance_of String
+    fields.each do |field|
+      collection.dublin_core.send(field).must_be_instance_of String
     end
   end
 
