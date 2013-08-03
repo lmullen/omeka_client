@@ -1,7 +1,7 @@
 require "recursive-open-struct"
 
 module OmekaClient
-  class ItemTypeMetadata < RecursiveOpenStruct
+  class ItemTypeMetadata
     def initialize(data)
       # Step through the element texts separating them into Dublin Core and
       # Item Type Metadata elements. e is the element text hash; i is the
