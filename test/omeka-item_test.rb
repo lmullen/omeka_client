@@ -58,27 +58,27 @@ describe OmekaClient::OmekaItem do
   end
 
   it "should have methods for each of the Dublin Core metadata" do
-    dc_fields = [:title, :subject, :contributor, :description, :creator, \
+    fields = [:title, :subject, :contributor, :description, :creator, \
     :source, :publisher,  :date,  :rights, :relation, :format, :language, \
     :type, :identifier, :coverage]
-    dc_fields.each do |field|
-      item.send("dc_#{field}").must_be_instance_of String
+    fields.each do |field|
+      item.dublin_core.send(field).must_be_instance_of String
     end
   end
 
   it "should have the Item Type metadata" do
     # We're assuming we know the item type, in this case Lesson Plan
-    itm_fields = [:duration, :standards, :objectives, :materials, \
+    fields = [:duration, :standards, :objectives, :materials, \
       :lesson_plan_text]
-    itm_fields.each do |field|
-      item.send("itm_#{field}").must_be_instance_of String
+    fields.each do |field|
+      item.item_type_metadata.send(field).must_be_instance_of String
     end
   end
 
   it "should be able to set the Dublin Core values and access them" do
-    new_title = "My New DC Title"
-    item.dc_title = new_title
-    item.data.element_texts[0].text.must_equal new_title
+    item = client.omeka_items(1)
+    item.dublin_core.title = "This Is the New Title"
+    item.data.element_texts[0].text.must_equal item.dublin_core.title
   end
 
 end
