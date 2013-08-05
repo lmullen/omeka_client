@@ -1,4 +1,4 @@
-require "recursive-open-struct"
+require "recursive_open_struct"
 
 module OmekaClient
 
