@@ -10,14 +10,14 @@ module OmekaClient
       # class.
       data.element_texts.each_with_index do |e, i|
         if e.element_set.name == "Dublin Core"
-          self.class.send(:define_method,
+          define_singleton_method(
             e.element.name.downcase.gsub(/\s/, '_'),
             proc{ data.element_texts[i].text }
-            )
-          self.class.send(:define_method,
+          )
+          define_singleton_method(
             e.element.name.downcase.gsub(/\s/, '_').gsub(/$/, '='),
             proc{ |value| data.element_texts[i].text = value }
-            )
+          )
         end
       end
     end
