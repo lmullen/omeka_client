@@ -29,9 +29,6 @@ module OmekaClient
       @connection = Rest::Client.new
     end
 
-    # Generic methods
-    # -------------------------------------------------------------------
-
     # Generic GET request to the Omeka site
     # @param  resource [String] The Omeka resource to request, e.g.
     #   "items", "collections"
@@ -43,23 +40,6 @@ module OmekaClient
     # @since 0.0.1
     def get(resource, id = nil, query = {} )
       build_request("get", resource, id, query)
-    end
-
-    # Parse a GET request into a useable format
-    # @param  resource [String] The Omeka resource to request, e.g.
-    #   "items", "collections"
-    # @param  id [Integer] The id of the specific resource to request. Include
-    #   an id to get just one item; do not include it to get all the items.
-    # @param  query [Hash] Additional query parameters
-    #
-    # @return [Array or Hash] A hash of the representation of the object,
-    #   or an array of hashes.
-    # @since 0.0.1
-    def get_hash(resource, id = nil, query = {} )
-      response = self.get(resource, id, query)
-      if response.code == 200
-        JSON.parse(response.body)
-      end
     end
 
     # Generic POST request to the Omeka site
@@ -97,11 +77,8 @@ module OmekaClient
       build_request("put", resource, id, body, query)
     end
 
-    # Methods that use classes
-    # -------------------------------------------------------------------
-
-    #
     # Get an array or a single Omeka item represented as an OmekaItem class
+    #
     # @param  id  [Integer] The ID of the item to return. No value gets an
     # array of all the items.
     # @param  query = {} [Hash] Additional query parameters
@@ -109,16 +86,14 @@ module OmekaClient
     #
     # @return [OmekaItem] An OmekaItem representation of the desired item,
     # or an array of OmekaItems
-    def omeka_items(id = nil, query = {} )
-      response = self.get_hash('items', id = id, query = query)
+    def get_items(id = nil)
       if id.nil?
-        items = Array.new
-        response.each do |item_hash|
-          items.push OmekaItem.new(item_hash)
-        end
-        return items
-      else
-        OmekaItem.new(response)
+        response = JSON.parse(self.get("items").body)
+        response.map! { |item| OmekaItem.new(item) }
+      elsif id.kind_of? Integer
+        OmekaItem.new(JSON.parse(self.get("items", id).body))
+      elsif id.instance_of? Array
+        puts "You want several items"
       end
     end
 
@@ -168,10 +143,6 @@ module OmekaClient
       end
     end
 
-
-    # Convenience methods
-    # -------------------------------------------------------------------
-
     # Get the description of the Omeka site
     #
     # @return [Hash] A hash of the description of the Omeka site
@@ -185,16 +156,6 @@ module OmekaClient
     # @since 0.0.1
     def resources
       self.get_hash('resources')
-    end
-
-    # Get a list of the Omeka items
-    #
-    # TODO: Check that items are available in the resources
-    #
-    # @return [Array] Returns an array of item hashes
-    # @since 0.0.1
-    def items
-      self.get_hash('items')
     end
 
     # Get a list of the Omeka collections
