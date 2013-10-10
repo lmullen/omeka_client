@@ -35,19 +35,6 @@ describe OmekaClient::Client do
     end
   end
 
-  it "must return a persistent wrapper for a GET request" do
-    resources.each do |resource|
-      client.get(resource).must_be_instance_of \
-      Rest::Wrappers::NetHttpPersistentResponseWrapper
-    end
-  end
-
-  it "must return a hash or array for a GET request" do
-    resources.each do |resource|
-      client.get_hash(resource).must_be_instance_of Array || Hash
-    end
-  end
-
   it "must return a representation of the site description" do
     client.site['title'].wont_be_nil
   end

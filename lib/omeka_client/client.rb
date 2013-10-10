@@ -1,6 +1,5 @@
 module OmekaClient
 
-  #
   # A class to create clients that interact with the Omeka API
   #
   # @author Lincoln Mullen
@@ -77,44 +76,50 @@ module OmekaClient
       build_request("put", resource, id, body, query)
     end
 
-    # Get an array or a single Omeka item represented as an OmekaItem class
-    #
-    # @param  id  [Integer] The ID of the item to return. No value gets an
-    # array of all the items.
+    # Get single Omeka item represented as an OmekaItem class
+    # @param  id  [Integer] The ID of the item to return. 
     # @param  query = {} [Hash] Additional query parameters
-    # @since  0.0.2
+    # @since  1.0.0
     #
-    # @return [OmekaItem] An OmekaItem representation of the desired item,
-    # or an array of OmekaItems
-    def get_items(id = nil)
-      if id.nil?
-        response = JSON.parse(self.get("items").body)
-        response.map! { |item| OmekaItem.new(item) }
-      elsif id.kind_of? Integer
-        OmekaItem.new(JSON.parse(self.get("items", id).body))
-      elsif id.instance_of? Array
-        puts "You want several items"
+    # @return [OmekaItem] An OmekaItem representation of the desired item
+    def get_item(id, query = {} )
+      response = self.get('items', id, query = query).body
+      return OmekaClient::OmekaItem.new(JSON.parse(response))
+    end
+
+    # Get all the items represented as an array of OmekaItems
+    # @param query = {} [Hash] Additional query parameters
+    # @since 1.0.0
+    #
+    # @return [Array] An array of OmekaItems
+    def get_all_items()
+      response = self.get('items').body
+      parsed = JSON.parse(response)
+      all_items = []
+      parsed.each do |item_hash|
+        all_items.push OmekaClient::OmekaItem.new(item_hash)
       end
+      return all_items
     end
 
     # Create a new item from an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem
     # @since 0.0.4
-    def post_item(omeka_item)
+    def post_items(omeka_item)
       self.post("items", omeka_item.data.to_h.to_json)
     end
 
     # Update an item using an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem
     # @since 0.0.4
-    def put_item(omeka_item)
+    def put_items(omeka_item)
       self.put("items", omeka_item.data.id, omeka_item.data.to_h.to_json)
     end
 
     # Delete the item represented by an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem
     # @since 0.0.4
-    def delete_item(omeka_item)
+    def delete_items(omeka_item)
       self.delete("items", omeka_item.data.id)
     end
 
@@ -141,31 +146,6 @@ module OmekaClient
       else
         OmekaCollection.new(response)
       end
-    end
-
-    # Get the description of the Omeka site
-    #
-    # @return [Hash] A hash of the description of the Omeka site
-    def site
-      self.get_hash('site')
-    end
-
-    # Get a list of the resources available from the Omeka API
-    #
-    # @return [Hash] Returns a hash of the resources available via the API
-    # @since 0.0.1
-    def resources
-      self.get_hash('resources')
-    end
-
-    # Get a list of the Omeka collections
-    #
-    # TODO: Check that items are available in the resources
-    #
-    # @return [Array] Returns an array of collection hashes
-    # @since 0.0.1
-    def collections
-      self.get_hash('collections')
     end
 
     # Helper method to build an API request
