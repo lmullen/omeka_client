@@ -14,7 +14,7 @@ module OmekaClient
 
     # Parse the data we got from the API into handy methods.
     #
-    # @param  hash [Hash] Uses the hash from OmekaClient::Client::get_hash
+    # @param  hash [Hash] Uses the parsed hash the API
     #
     def initialize(hash)
       @data = RecursiveOpenStruct.new(hash, :recurse_over_arrays => true)

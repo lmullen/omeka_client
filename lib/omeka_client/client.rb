@@ -102,6 +102,32 @@ module OmekaClient
       return all_items
     end
 
+    # Get a OmekaCollection class representation of an Omeka collection
+    # @param  id  [Integer] The ID of the collection to return. No value gets
+    # an array of all the items.
+    # @return  [OmekaCollection] An OmekaCollection object
+    # @since 1.0.0
+    def get_collection(id)
+      response = self.get('collections', id = id).body
+      return OmekaClient::OmekaCollection.new(JSON.parse(response))
+    end
+
+    # Get a OmekaCollection class representation of an Omeka collection
+    # @param  id  [Integer] The ID of the collection to return. No value gets
+    # an array of all the items.
+    # @return  [Array] An OmekaCollection object
+    # @since 1.0.0
+    def get_all_collections()
+      response = self.get('collections').body
+      parsed = JSON.parse(response)
+      all_collections = []
+      parsed.each do |item_hash|
+        all_collections.push OmekaClient::OmekaCollection.new(item_hash)
+      end
+      return all_collections
+    end
+
+
     # Create a new item from an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem
     # @since 0.0.4
@@ -127,26 +153,10 @@ module OmekaClient
     # @return [OmekaSite] The representation of the Omeka site
     # @since 0.0.5
     def get_site
-      OmekaSite.new(self.get_hash('site'))
+      response = self.get('site').body
+      OmekaSite.new(JSON.parse(response))
     end
 
-    # Get a OmekaCollection class representation of an Omeka collection
-    # @param  id  [Integer] The ID of the collection to return. No value gets
-    # an array of all the items.
-    # @return  [Array or OmekaCollection] An OmekaCollection or array of Omeka
-    # Collections @since 0.0.5
-    def get_collections(id = nil)
-      response = self.get_hash('collections', id = id)
-      if id.nil?
-        collections = Array.new
-        response.each do |hash|
-          items.push OmekaCollection.new(hash)
-        end
-        return collections
-      else
-        OmekaCollection.new(response)
-      end
-    end
 
     # Helper method to build an API request
     #

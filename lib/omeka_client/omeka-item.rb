@@ -17,7 +17,7 @@ module OmekaClient
     # through @data. The Dublin Core and Item Type Metadata fields are also
     # available though special methods of the form dc_title and itm_field.
     #
-    # @param  hash [Hash] Uses the hash from OmekaClient::Client::get_hash
+    # @param  hash [Hash] Uses the parsed hash from JSON api
     #
     def initialize(hash)
       @data = RecursiveOpenStruct.new(hash, :recurse_over_arrays => true)
