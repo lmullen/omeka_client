@@ -21,7 +21,6 @@ module OmekaClient
     #   perform arbitrary REST queries. See https://github.com/iron-io/rest
     #
     # @since 0.0.1
-    #
     def initialize(endpoint, api_key = nil )
       @endpoint = endpoint
       @api_key = api_key
@@ -127,25 +126,24 @@ module OmekaClient
       return all_collections
     end
 
-
     # Create a new item from an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem
     # @since 0.0.4
-    def post_items(omeka_item)
+    def post_item(omeka_item)
       self.post("items", omeka_item.data.to_h.to_json)
     end
 
     # Update an item using an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem
     # @since 0.0.4
-    def put_items(omeka_item)
+    def put_item(omeka_item)
       self.put("items", omeka_item.data.id, omeka_item.data.to_h.to_json)
     end
 
     # Delete the item represented by an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem
     # @since 0.0.4
-    def delete_items(omeka_item)
+    def delete_item(omeka_item)
       self.delete("items", omeka_item.data.id)
     end
 
