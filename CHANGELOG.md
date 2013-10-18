@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.0
+
+-   DublinCore and ItemTypeMetadata classes now offer access to those
+    types of metadata.
+-   A helper method now handles building the API requests
+
 ## v0.0.4 (August 1, 2013)
 
 -   Read and set all Dublin Core and Item Type Metadata fields through

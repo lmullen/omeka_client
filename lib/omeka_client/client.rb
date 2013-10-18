@@ -1,6 +1,5 @@
 module OmekaClient
 
-  #
   # A class to create clients that interact with the Omeka API
   #
   # @author Lincoln Mullen
@@ -10,22 +9,23 @@ module OmekaClient
     attr_accessor :endpoint, :api_key, :connection
 
     # Sets up a new client to interact with an Omeka site
+    #
     # @param  endpoint [String] the URL of the Omeka API endpoint, without a
     #   trailing slash. For example: "{http://localhost/omeka/api}"
     # @param  api_key [String] The API key of the Omeka user. This can
     #   be null for GET requests,  but  is required for POST, PUT, and DELETE
     #   requests.
+    # 
     # @return [OmekaClient] The attribute @connection is the client itself,
     #   which is an instance from the Rest gem. This client can be used to
     #   perform arbitrary REST queries. See https://github.com/iron-io/rest
+    #
+    # @since 0.0.1
     def initialize(endpoint, api_key = nil )
       @endpoint = endpoint
       @api_key = api_key
       @connection = Rest::Client.new
     end
-
-    # Generic methods
-    # -------------------------------------------------------------------
 
     # Generic GET request to the Omeka site
     # @param  resource [String] The Omeka resource to request, e.g.
@@ -37,27 +37,7 @@ module OmekaClient
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.1
     def get(resource, id = nil, query = {} )
-      url = self.endpoint + "/" + resource
-      url += "/" + id.to_s unless id.nil?
-      query[:key] = self.api_key unless self.api_key.nil?
-      self.connection.get(url, :params => query)
-    end
-
-    # Parse a GET request into a useable format
-    # @param  resource [String] The Omeka resource to request, e.g.
-    #   "items", "collections"
-    # @param  id [Integer] The id of the specific resource to request. Include
-    #   an id to get just one item; do not include it to get all the items.
-    # @param  query [Hash] Additional query parameters
-    #
-    # @return [Array or Hash] A hash of the representation of the object,
-    #   or an array of hashes.
-    # @since 0.0.1
-    def get_hash(resource, id = nil, query = {} )
-      response = self.get(resource, id, query)
-      if response.code == 200
-        JSON.parse(response.body)
-      end
+      build_request("get", resource, id, query)
     end
 
     # Generic POST request to the Omeka site
@@ -69,38 +49,21 @@ module OmekaClient
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.3
     def post(resource, body = nil, query = {} )
-      url = self.endpoint + "/" + resource
-      query['key'] = self.api_key unless self.api_key.nil?
-      self.connection.post(url, :body => body, :params => query)
+      build_request("post", resource, nil, body, query)
     end
 
     # Generic DELETE request to the Omeka site
     # @param  resource [String] The type of Omeka resource to delete, e.g.
     #   "items", "collections"
     # @param  id [Integer] The id number of the Omeka resource to delete
-    # @param  query = {} [Hash] Additional query parameters
     #
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.3
-    def delete(resource, id, query = {} )
-      url = self.endpoint + "/" + resource
-      url += "/" + id.to_s unless id.nil?
-      query[:key] = self.api_key unless self.api_key.nil?
-
-      # The rest gem that provides out functionality has a bug. The Omeka API
-      # returns 204 No Content on DELETE, indicating that the item has been
-      # successfully deleted but that there is no body to return. The rest
-      # gem assumes there will be a body, so it throws a type error. Until
-      # this is fixed, we just rescue the error and don't worry about it.
-      begin
-        self.connection.delete(url, :params => query)
-      rescue TypeError
-        # Not putting the error to stdout
-      end
-
+    def delete(resource, id)
+      build_request("delete", resource, id, nil, {})
     end
 
-    # Generic DELETE request to the Omeka site
+    # Generic PUT request to the Omeka site
     # @param  resource [String] The type of Omeka resource to update, e.g.
     #   "items", "collections"
     # @param  id [Integer] The id number of the Omeka resource to update
@@ -109,35 +72,58 @@ module OmekaClient
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.3
     def put(resource, id, body, query = {} )
-      url = self.endpoint + "/" + resource
-      url += "/" + id.to_s unless id.nil?
-      query[:key] = self.api_key unless self.api_key.nil?
-      self.connection.put(url, :body => body, :params => query)
+      build_request("put", resource, id, body, query)
     end
 
-    # Methods that use classes
-    # -------------------------------------------------------------------
-
-    #
-    # Get an array or a single Omeka item represented as an OmekaItem class
-    # @param  id  [Integer] The ID of the item to return. No value gets an
-    # array of all the items.
+    # Get single Omeka item represented as an OmekaItem class
+    # @param  id  [Integer] The ID of the item to return. 
     # @param  query = {} [Hash] Additional query parameters
-    # @since  0.0.2
+    # @since  1.0.0
     #
-    # @return [OmekaItem] An OmekaItem representation of the desired item,
-    # or an array of OmekaItems
-    def omeka_items(id = nil, query = {} )
-      response = self.get_hash('items', id = id, query = query)
-      if id.nil?
-        items = Array.new
-        response.each do |item_hash|
-          items.push OmekaItem.new(item_hash)
-        end
-        return items
-      else
-        OmekaItem.new(response)
+    # @return [OmekaItem] An OmekaItem representation of the desired item
+    def get_item(id, query = {} )
+      response = self.get('items', id, query = query).body
+      return OmekaClient::OmekaItem.new(JSON.parse(response))
+    end
+
+    # Get all the items represented as an array of OmekaItems
+    # @param query = {} [Hash] Additional query parameters
+    # @since 1.0.0
+    #
+    # @return [Array] An array of OmekaItems
+    def get_all_items()
+      response = self.get('items').body
+      parsed = JSON.parse(response)
+      all_items = []
+      parsed.each do |item_hash|
+        all_items.push OmekaClient::OmekaItem.new(item_hash)
       end
+      return all_items
+    end
+
+    # Get a OmekaCollection class representation of an Omeka collection
+    # @param  id  [Integer] The ID of the collection to return. No value gets
+    # an array of all the items.
+    # @return  [OmekaCollection] An OmekaCollection object
+    # @since 1.0.0
+    def get_collection(id)
+      response = self.get('collections', id = id).body
+      return OmekaClient::OmekaCollection.new(JSON.parse(response))
+    end
+
+    # Get a OmekaCollection class representation of an Omeka collection
+    # @param  id  [Integer] The ID of the collection to return. No value gets
+    # an array of all the items.
+    # @return  [Array] An OmekaCollection object
+    # @since 1.0.0
+    def get_all_collections()
+      response = self.get('collections').body
+      parsed = JSON.parse(response)
+      all_collections = []
+      parsed.each do |item_hash|
+        all_collections.push OmekaClient::OmekaCollection.new(item_hash)
+      end
+      return all_collections
     end
 
     # Create a new item from an OmekaItem instance
@@ -161,51 +147,55 @@ module OmekaClient
       self.delete("items", omeka_item.data.id)
     end
 
-    # Convenience methods
-    # -------------------------------------------------------------------
-
-    # Get the description of the Omeka site
-    #
-    # @return [Hash] A hash of the description of the Omeka site
-    def site
-      self.get_hash('site')
+    # Get a OmekaSite class representation of the Omeka site
+    # @return [OmekaSite] The representation of the Omeka site
+    # @since 0.0.5
+    def get_site
+      response = self.get('site').body
+      OmekaSite.new(JSON.parse(response))
     end
 
-    # Get a list of the resources available from the Omeka API
-    #
-    # @return [Hash] Returns a hash of the resources available via the API
-    # @since 0.0.1
-    def resources
-      self.get_hash('resources')
-    end
 
-    # Get a list of the Omeka items
+    # Helper method to build an API request
     #
-    # TODO: Check that items are available in the resources
+    # @param method [String] The type of REST request to make: "get", "post", 
+    #   "put", or "delete".
+    # @param resource [String] The type of resource to request from the Omeka 
+    #   site, e.g., "items" or "site".
+    # @param id [Integer] The id of the resource to request from the Omeka 
+    #   site.
+    # @param body [] The body of a request in a PUT or POST request.
+    # @param query [Hash] Additional query parameters for the request.
     #
-    # @return [Array] Returns an array of item hashes
-    # @since 0.0.1
-    def items
-      self.get_hash('items')
-    end
+    # @return [NetHttpPersistentResponseWrapper] A wrapper around the API's 
+    # response, containing the HTTP code and the response body.
+    # 
+    # @since 1.0.0
+    #
+    def build_request(method, resource = nil, id = nil, body =nil, query = {})
 
-    # Get a list of the Omeka collections
-    #
-    # TODO: Check that items are available in the resources
-    #
-    # @return [Array] Returns an array of collection hashes
-    # @since 0.0.1
-    def collections
-      self.get_hash('collections')
-    end
+      url =  self.endpoint 
+      url += "/" + resource unless resource.nil?
+      url += "/" + id.to_s unless id.nil?
+      query[:key] = self.api_key unless self.api_key.nil?
 
-    # Other generic methods to write
-    # TODO: tags
-    # TODO: files
-    # TODO: item_types
-    # TODO: elements
-    # TODO: element_sets
-    # TODO: users
+      case method
+      when "get"
+        self.connection.get(url, :params => query)
+      when "post"
+        self.connection.post(url, :body => body, :params => query)
+      when "put"
+        self.connection.put(url, :body => body, :params => query)
+      when "delete"
+        begin
+          self.connection.delete(url, :params => query)
+        rescue TypeError
+          # Not putting the error to stdout
+        end
+      end
+
+    end
+    private :build_request
 
   end
 
