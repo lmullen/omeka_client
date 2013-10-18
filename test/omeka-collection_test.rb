@@ -5,7 +5,7 @@ require "omeka_client"
 test_endpoint = "http://localhost/omeka-2.1-rc1/api"
 test_api_key  = "3b036221e180af46bafa4b5e4a1db30e84e78e89"    # contributor
 client = OmekaClient::Client.new(test_endpoint, test_api_key)
-collection = client.get_collections(1)
+collection = client.get_collection(1)
 
 describe OmekaClient::OmekaCollection do
   it "should be of class OmekaCollection" do
