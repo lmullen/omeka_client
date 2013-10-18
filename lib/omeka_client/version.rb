@@ -1,4 +1,4 @@
 module OmekaClient
   # The version number
-  VERSION = "0.0.4"
+  VERSION = "1.0.0.a"
 end
