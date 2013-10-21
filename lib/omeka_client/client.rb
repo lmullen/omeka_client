@@ -126,6 +126,19 @@ module OmekaClient
       return all_collections
     end
 
+    # Get single Omeka item represented as an OmekaItem class
+    # @param  id  [Integer] The ID of the item to return. 
+    # @param  query = {} [Hash] Additional query parameters
+    # @since  X.X.X
+    #
+    # @return [OmekaFile] An OmekaFile representation of the desired file
+    def get_file(id, query = {} )
+      response = self.get('files', id, query = query).body
+      return OmekaClient::OmekaFile.new(JSON.parse(response))
+    end
+
+
+
     # Create a new item from an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem
     # @since 0.0.4
