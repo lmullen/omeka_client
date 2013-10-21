@@ -19,11 +19,17 @@ module OmekaClient
     #
     # @param  hash [Hash] Uses the parsed hash from JSON api
     #
-    def initialize(hash)
+    def initialize(client, hash)
+      @client = client
       @data = RecursiveOpenStruct.new(hash, :recurse_over_arrays => true)
       @dublin_core = DublinCore.new(@data)
       @item_type_metadata = ItemTypeMetadata.new(@data)
     end
+
+    def files
+      @client.get_all_files({:item=>self.data.id})
+    end
+
 
   end
 

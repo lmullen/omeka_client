@@ -83,7 +83,7 @@ module OmekaClient
     # @return [OmekaItem] An OmekaItem representation of the desired item
     def get_item(id, query = {} )
       response = self.get('items', id, query = query).body
-      return OmekaClient::OmekaItem.new(JSON.parse(response))
+      return OmekaClient::OmekaItem.new(self, JSON.parse(response))
     end
 
     # Get all the items represented as an array of OmekaItems
@@ -96,7 +96,7 @@ module OmekaClient
       parsed = JSON.parse(response)
       all_items = []
       parsed.each do |item_hash|
-        all_items.push OmekaClient::OmekaItem.new(item_hash)
+        all_items.push OmekaClient::OmekaItem.new(self, item_hash)
       end
       return all_items
     end
@@ -134,10 +134,25 @@ module OmekaClient
     # @return [OmekaFile] An OmekaFile representation of the desired file
     def get_file(id, query = {} )
       response = self.get('files', id, query = query).body
-      return OmekaClient::OmekaFile.new(JSON.parse(response))
+      return OmekaClient::OmekaFile.new(self, JSON.parse(response))
     end
 
 
+    # Get all the files represented as an array of OmekaFiles
+    # @param query = {} [Hash] Additional query parameters
+    # @since 1.0.0
+    #
+    # @return [Array] An array of OmekaItems
+    def get_all_files(query = {})
+      response = self.get('files', nil, query = query).body
+      
+      parsed = JSON.parse(response)
+      all_files = []
+      parsed.each do |file_hash|
+        all_files.push OmekaClient::OmekaFile.new(self, file_hash)
+      end
+      return all_files
+    end
 
     # Create a new item from an OmekaItem instance
     # @param omeka_item [OmekaItem] An instance of OmekaItem

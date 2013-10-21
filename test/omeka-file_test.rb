@@ -26,9 +26,13 @@ describe OmekaClient::OmekaFile do
   end
 
 
-  # it "should have an item helper" do
-    # file.item.must_be_instance_of OmekaClient::OmekaItem
-  # end
+  it "should have an item helper" do
+    file.item.must_be_instance_of OmekaClient::OmekaItem
+  end
 
+
+  it "should be accessible through item" do
+    item.files.first.must_be_instance_of OmekaClient::OmekaFile
+  end
 
 end
