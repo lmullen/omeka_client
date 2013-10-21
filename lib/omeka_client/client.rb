@@ -82,7 +82,7 @@ module OmekaClient
     #
     # @return [OmekaItem] An OmekaItem representation of the desired item
     def get_item(id, query = {} )
-      response = self.get('items', id, query = query).body
+      response = self.get('items', id, query).body
       return OmekaClient::OmekaItem.new(self, JSON.parse(response))
     end
 
@@ -107,7 +107,7 @@ module OmekaClient
     # @return  [OmekaCollection] An OmekaCollection object
     # @since 1.0.0
     def get_collection(id)
-      response = self.get('collections', id = id).body
+      response = self.get('collections', id).body
       return OmekaClient::OmekaCollection.new(self, JSON.parse(response))
     end
 
@@ -133,7 +133,7 @@ module OmekaClient
     #
     # @return [OmekaFile] An OmekaFile representation of the desired file
     def get_file(id, query = {} )
-      response = self.get('files', id, query = query).body
+      response = self.get('files', id, query).body
       return OmekaClient::OmekaFile.new(self, JSON.parse(response))
     end
 
@@ -144,7 +144,7 @@ module OmekaClient
     #
     # @return [Array] An array of OmekaItems
     def get_all_files(query = {})
-      response = self.get('files', nil, query = query).body
+      response = self.get('files', nil, query).body
       
       parsed = JSON.parse(response)
       all_files = []
