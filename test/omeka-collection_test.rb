@@ -44,6 +44,12 @@ describe OmekaClient::OmekaCollection do
     collection.data.items.count.must_be_instance_of Fixnum
   end
 
+  it "should have an items helper" do
+    collection.items.first.must_be_instance_of OmekaClient::OmekaItem
+  end
+
+
+
   it "should have extended resources" do
     collection.data.extended_resources.must_be_instance_of Array
   end

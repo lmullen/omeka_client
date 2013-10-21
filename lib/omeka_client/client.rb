@@ -91,8 +91,8 @@ module OmekaClient
     # @since 1.0.0
     #
     # @return [Array] An array of OmekaItems
-    def get_all_items()
-      response = self.get('items').body
+    def get_all_items(query = {})
+      response = self.get('items', nil, query).body
       parsed = JSON.parse(response)
       all_items = []
       parsed.each do |item_hash|
@@ -108,7 +108,7 @@ module OmekaClient
     # @since 1.0.0
     def get_collection(id)
       response = self.get('collections', id = id).body
-      return OmekaClient::OmekaCollection.new(JSON.parse(response))
+      return OmekaClient::OmekaCollection.new(self, JSON.parse(response))
     end
 
     # Get a OmekaCollection class representation of an Omeka collection
@@ -121,7 +121,7 @@ module OmekaClient
       parsed = JSON.parse(response)
       all_collections = []
       parsed.each do |item_hash|
-        all_collections.push OmekaClient::OmekaCollection.new(item_hash)
+        all_collections.push OmekaClient::OmekaCollection.new(self, item_hash)
       end
       return all_collections
     end

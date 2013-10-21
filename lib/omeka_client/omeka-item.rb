@@ -30,6 +30,12 @@ module OmekaClient
       @client.get_all_files({:item=>self.data.id})
     end
 
+    def collection
+      return nil unless self.data.collection
+
+      @client.get_collection(self.data.collection.id)
+    end
+
 
   end
 

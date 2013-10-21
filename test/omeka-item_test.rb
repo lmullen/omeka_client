@@ -75,6 +75,10 @@ describe OmekaClient::OmekaItem do
     end
   end
 
+  it "should have a collection helper method" do
+    item.collection.must_be_instance_of OmekaClient::OmekaCollection
+  end
+
   # it "should be able to set the Dublin Core values and access them" do
   #   item = client.omeka_items(1)
   #   item.dublin_core.title = "This Is the New Title"

@@ -16,10 +16,16 @@ module OmekaClient
     #
     # @param  hash [Hash] Uses the parsed hash the API
     #
-    def initialize(hash)
+    def initialize(client, hash)
+      @client = client
       @data = RecursiveOpenStruct.new(hash, :recurse_over_arrays => true)
       @dublin_core = DublinCore.new(@data)
     end
+
+    def items
+      @client.get_all_items({:collection => @data.id })
+    end
+
 
   end
 
