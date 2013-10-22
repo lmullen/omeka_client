@@ -2,6 +2,12 @@ require "recursive_open_struct"
 
 module OmekaClient
   class DublinCore
+    
+    def method_missing(meth, *args, &block)
+      return nil
+    end
+    
+    
     def initialize(data)
       # Step through the element texts separating them into Dublin Core and
       # Item Type Metadata elements. e is the element text hash; i is the
