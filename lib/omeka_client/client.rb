@@ -37,7 +37,7 @@ module OmekaClient
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.1
     def get(resource, id = nil, query = {} )
-      build_request("get", resource, id, query)
+      build_request("get", resource, id, nil, query)
     end
 
     # Generic POST request to the Omeka site
