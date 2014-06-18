@@ -132,7 +132,7 @@ This gem is licensed under the [GPLv3][], the same as Omeka.
 
 ## Thanks
 
-This gem is based on Jim Safely's [sample client][] for Python. And of
+This gem is based on Jim Safley's [sample client][] for Python. And of
 course many thanks to all the amazing [Omeka developers][].
 
   [Omeka]: http://omeka.org
