@@ -1,29 +1,28 @@
 require "minitest/autorun"
 require "omeka_client"
+require "./test/test_credentials"
 
 describe OmekaClient::Client do
 
   # Setup a test client
-  test_endpoint = "http://localhost/omeka-2.1-rc1/api"
-  test_api_key  = "3b036221e180af46bafa4b5e4a1db30e84e78e89"    # contributor
   resources     = ["items", "collections"]
-  client        = OmekaClient::Client.new(test_endpoint, test_api_key)
+  client        = OmekaClient::Client.new(TEST_ENDPOINT, TEST_API_KEY)
 
   it "must have an endpoint" do
-    client.endpoint.must_equal test_endpoint
+    client.endpoint.must_equal TEST_ENDPOINT
   end
 
   it "can be created without an API key" do
-    keyless = OmekaClient::Client.new(test_endpoint)
+    keyless = OmekaClient::Client.new(TEST_ENDPOINT)
     keyless.api_key.must_be_nil
   end
 
   it "can be created with an API key" do
-    client.api_key.must_equal test_api_key
+    client.api_key.must_equal TEST_API_KEY
   end
 
   it "must successfully request items and collections " do
-    resources = ["items", "collections"]
+    resources = ["items", "collections", "files"]
     resources.each do |resource|
       client.get(resource).code.must_equal 200
     end
@@ -56,6 +55,10 @@ describe OmekaClient::Client do
 
   it "must return an OmekaItem class" do
    client.get_item(1).must_be_instance_of OmekaClient::OmekaItem
+ end
+
+  it "must return an OmekaFile class" do
+   client.get_file(1).must_be_instance_of OmekaClient::OmekaFile
  end
 
   # it "must return an array of OmekaItem classes" do

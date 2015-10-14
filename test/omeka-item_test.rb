@@ -1,10 +1,10 @@
 require "minitest/autorun"
 require "omeka_client"
+require "./test/test_credentials"
+
 
 # Set up an test client
-test_endpoint = "http://localhost/omeka-2.1-rc1/api"
-test_api_key  = "3b036221e180af46bafa4b5e4a1db30e84e78e89"    # contributor
-client = OmekaClient::Client.new(test_endpoint, test_api_key)
+client = OmekaClient::Client.new(TEST_ENDPOINT, TEST_API_KEY)
 item = client.get_item(1)
 
 describe OmekaClient::OmekaItem do
@@ -73,6 +73,10 @@ describe OmekaClient::OmekaItem do
     fields.each do |field|
       item.item_type_metadata.send(field).must_be_instance_of String
     end
+  end
+
+  it "should have a collection helper method" do
+    item.collection.must_be_instance_of OmekaClient::OmekaCollection
   end
 
   # it "should be able to set the Dublin Core values and access them" do

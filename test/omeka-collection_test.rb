@@ -1,10 +1,10 @@
 require "minitest/autorun"
 require "omeka_client"
+require "./test/test_credentials"
+
 
 # Set up an test client
-test_endpoint = "http://localhost/omeka-2.1-rc1/api"
-test_api_key  = "3b036221e180af46bafa4b5e4a1db30e84e78e89"    # contributor
-client = OmekaClient::Client.new(test_endpoint, test_api_key)
+client = OmekaClient::Client.new(TEST_ENDPOINT, TEST_API_KEY)
 collection = client.get_collection(1)
 
 describe OmekaClient::OmekaCollection do
@@ -43,6 +43,12 @@ describe OmekaClient::OmekaCollection do
   it "should know how many items it has" do
     collection.data.items.count.must_be_instance_of Fixnum
   end
+
+  it "should have an items helper" do
+    collection.items.first.must_be_instance_of OmekaClient::OmekaItem
+  end
+
+
 
   it "should have extended resources" do
     collection.data.extended_resources.must_be_instance_of Array

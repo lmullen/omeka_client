@@ -37,7 +37,7 @@ module OmekaClient
     # @return [NetHttpPersistentResponseWrapper] A wrapper around the object
     # @since 0.0.1
     def get(resource, id = nil, query = {} )
-      build_request("get", resource, id, query)
+      build_request("get", resource, id, nil, query)
     end
 
     # Generic POST request to the Omeka site
@@ -82,8 +82,8 @@ module OmekaClient
     #
     # @return [OmekaItem] An OmekaItem representation of the desired item
     def get_item(id, query = {} )
-      response = self.get('items', id, query = query).body
-      return OmekaClient::OmekaItem.new(JSON.parse(response))
+      response = self.get('items', id, query).body
+      return OmekaClient::OmekaItem.new(self, JSON.parse(response))
     end
 
     # Get all the items represented as an array of OmekaItems
@@ -91,12 +91,12 @@ module OmekaClient
     # @since 1.0.0
     #
     # @return [Array] An array of OmekaItems
-    def get_all_items()
-      response = self.get('items').body
+    def get_all_items(query = {})
+      response = self.get('items', nil, query).body
       parsed = JSON.parse(response)
       all_items = []
       parsed.each do |item_hash|
-        all_items.push OmekaClient::OmekaItem.new(item_hash)
+        all_items.push OmekaClient::OmekaItem.new(self, item_hash)
       end
       return all_items
     end
@@ -107,8 +107,8 @@ module OmekaClient
     # @return  [OmekaCollection] An OmekaCollection object
     # @since 1.0.0
     def get_collection(id)
-      response = self.get('collections', id = id).body
-      return OmekaClient::OmekaCollection.new(JSON.parse(response))
+      response = self.get('collections', id).body
+      return OmekaClient::OmekaCollection.new(self, JSON.parse(response))
     end
 
     # Get a OmekaCollection class representation of an Omeka collection
@@ -121,9 +121,37 @@ module OmekaClient
       parsed = JSON.parse(response)
       all_collections = []
       parsed.each do |item_hash|
-        all_collections.push OmekaClient::OmekaCollection.new(item_hash)
+        all_collections.push OmekaClient::OmekaCollection.new(self, item_hash)
       end
       return all_collections
+    end
+
+    # Get single Omeka item represented as an OmekaItem class
+    # @param  id  [Integer] The ID of the item to return. 
+    # @param  query = {} [Hash] Additional query parameters
+    # @since  X.X.X
+    #
+    # @return [OmekaFile] An OmekaFile representation of the desired file
+    def get_file(id, query = {} )
+      response = self.get('files', id, query).body
+      return OmekaClient::OmekaFile.new(self, JSON.parse(response))
+    end
+
+
+    # Get all the files represented as an array of OmekaFiles
+    # @param query = {} [Hash] Additional query parameters
+    # @since 1.0.0
+    #
+    # @return [Array] An array of OmekaItems
+    def get_all_files(query = {})
+      response = self.get('files', nil, query).body
+      
+      parsed = JSON.parse(response)
+      all_files = []
+      parsed.each do |file_hash|
+        all_files.push OmekaClient::OmekaFile.new(self, file_hash)
+      end
+      return all_files
     end
 
     # Create a new item from an OmekaItem instance

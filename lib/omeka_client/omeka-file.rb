@@ -1,5 +1,5 @@
 require "recursive_open_struct"
-
+require "pry"
 module OmekaClient
 
   #
@@ -8,9 +8,8 @@ module OmekaClient
   # @author Lincoln Mullen
   # @since  0.0.2
   #
-  class OmekaItem
-
-    attr_accessor :data, :dublin_core, :item_type_metadata
+  class OmekaFile
+    attr_accessor :data
 
     # Parse the data we got from the API into handy methods. All of the data
     # from the JSON returned by the API is available as RecursiveOpenStructs
@@ -22,18 +21,12 @@ module OmekaClient
     def initialize(client, hash)
       @client = client
       @data = RecursiveOpenStruct.new(hash, :recurse_over_arrays => true)
-      @dublin_core = DublinCore.new(@data)
-      @item_type_metadata = ItemTypeMetadata.new(@data)
+#      @dublin_core = DublinCore.new(@data)
+#      @item_type_metadata = ItemTypeMetadata.new(@data)
     end
 
-    def files
-      @client.get_all_files({:item=>self.data.id})
-    end
-
-    def collection
-      return nil unless self.data.collection
-
-      @client.get_collection(self.data.collection.id)
+    def item
+      @client.get_item(@data.item.id)
     end
 
 
