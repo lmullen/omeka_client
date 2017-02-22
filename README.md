@@ -1,3 +1,5 @@
+**THIS SOFTWARE IS NO LONGER SUPPORTED.**
+
 # Omeka Client
 
 A REST client for [Omeka][], using the API introduced in Omeka 2.1.
